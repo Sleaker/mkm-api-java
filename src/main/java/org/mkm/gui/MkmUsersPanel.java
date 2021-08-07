@@ -16,8 +16,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.api.mkm.modele.Article;
 import org.api.mkm.modele.Article.ARTICLES_ATT;
 import org.api.mkm.modele.User;
@@ -27,6 +25,9 @@ import org.api.mkm.tools.MkmConstants;
 import org.mkm.gui.modeles.ArticlesTableModel;
 import org.mkm.gui.modeles.UsersTableModel;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class MkmUsersPanel extends JPanel {
 	/**
 	 * 
@@ -35,7 +36,6 @@ public class MkmUsersPanel extends JPanel {
 	private JTable tableUsers;
 	private UsersTableModel usersModel;
 	private ArticlesTableModel articlesModel;
-	private transient Logger logger = LogManager.getLogger(this.getClass());
 	private JTable tableArticles;
 
 	private void initGUI()
@@ -100,7 +100,7 @@ public class MkmUsersPanel extends JPanel {
 			
 			
 		} catch (Exception e) {
-			logger.error("error searching",e);
+			log.error("error searching",e);
 			JOptionPane.showMessageDialog(this, e.getMessage(),MkmConstants.MKM_ERROR,JOptionPane.ERROR_MESSAGE);
 		} 
 		

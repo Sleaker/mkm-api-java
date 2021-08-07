@@ -25,8 +25,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.api.mkm.modele.Article;
 import org.api.mkm.modele.Article.ARTICLES_ATT;
 import org.api.mkm.modele.Localization;
@@ -43,6 +41,9 @@ import org.api.mkm.tools.MkmConstants;
 import org.mkm.gui.modeles.ArticlesTableModel;
 import org.mkm.gui.renderer.ProductListRenderer;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class MkmSearchPanel extends JPanel {
 	/**
 	 * 
@@ -52,19 +53,16 @@ public class MkmSearchPanel extends JPanel {
 	private JTable tableArticles;
 	private DefaultListModel<Product> productsModel;
 	private ArticlesTableModel articlesModel;
-	private transient Logger logger = LogManager.getLogger(this.getClass());
 
 	private JLabel lblPics;
 	private JButton btnAddWantlist;
 	private JButton btnBasket;
 	private JButton btnAddStock;
-	
+
 	private Product selectedProduct;
 	private Article selectedArticle;
 
-	
-	private void initGUI()
-	{
+	private void initGUI() {
 		JTextField txtSearch;
 		JTextField txtID;
 		JButton btnExportPriceGuid;
@@ -75,149 +73,132 @@ public class MkmSearchPanel extends JPanel {
 		JLabel lblSearchProduct;
 		lblPics = new JLabel();
 		setLayout(new BorderLayout(0, 0));
-		
-		
-		add(lblPics,BorderLayout.EAST);
+
+		add(lblPics, BorderLayout.EAST);
 		JPanel panelNorth = new JPanel();
 		add(panelNorth, BorderLayout.NORTH);
-		
+
 		txtSearch = new JTextField();
-		txtSearch.addActionListener(ae->search(txtSearch.getText()));
-		
+		txtSearch.addActionListener(ae -> search(txtSearch.getText()));
+
 		lblSearchProduct = new JLabel("Search product : ");
 		panelNorth.add(lblSearchProduct);
 		panelNorth.add(txtSearch);
 		txtSearch.setColumns(15);
-		
+
 		btnAddWantlist = new JButton("Add WantList");
-		btnAddWantlist.addActionListener(ae-> 
-			{
-				JWantListChooser choose;
-				try {
-					choose = new JWantListChooser();
-					choose.setVisible(true);
-					
-					Wantslist l = choose.getSelected();
-					
-					WantsService service = new WantsService();
-					
-					WantItem it = new WantItem();
-						it.setProduct(selectedProduct);
-						it.setCount(1);
-					
-					service.addItem(l, it);
-					
-					
-				} catch (Exception e1) {
-					logger.error(e1);
-				} 
+		btnAddWantlist.addActionListener(ae -> {
+			JWantListChooser choose;
+			try {
+				choose = new JWantListChooser();
+				choose.setVisible(true);
+
+				Wantslist l = choose.getSelected();
+
+				WantsService service = new WantsService();
+
+				WantItem it = new WantItem();
+				it.setProduct(selectedProduct);
+				it.setCount(1);
+
+				service.addItem(l, it);
+
+			} catch (Exception e1) {
+				log.error(e1);
+			}
 		});
 		panelNorth.add(new JLabel("or by id :"));
-		
+
 		txtID = new JTextField();
-		txtID.addActionListener(ae->search(Integer.parseInt(txtID.getText())));
+		txtID.addActionListener(ae -> search(Integer.parseInt(txtID.getText())));
 		panelNorth.add(txtID);
 		txtID.setColumns(10);
 		btnAddWantlist.setEnabled(false);
 		panelNorth.add(btnAddWantlist);
-		
+
 		btnAddStock = new JButton("add to Stock");
 		panelNorth.add(btnAddStock);
-		
-		
-		btnAddStock.addActionListener(l->{
-			
+
+		btnAddStock.addActionListener(l -> {
+
 			StockService serv = new StockService();
 			List<Product> pdts = listResults.getSelectedValuesList();
 			List<Article> arts = new ArrayList<>();
-			
-			for(Product p : pdts)
-			{
-				Article a =  new Article();
-					a.setProduct(p);
-					a.setIdProduct(p.getIdProduct());
-					a.setComments("Import from mkm ui");
-					a.setPrice(1000000);
-					a.setCount(1);
-					a.setLanguage(new Localization(1, "English"));
-					a.setCondition("NM");
-				
+
+			for (Product p : pdts) {
+				Article a = new Article();
+				a.setProduct(p);
+				a.setIdProduct(p.getIdProduct());
+				a.setComments("Import from mkm ui");
+				a.setPrice(1000000);
+				a.setCount(1);
+				a.setLanguage(new Localization(1, "English"));
+				a.setCondition("NM");
+
 				arts.add(a);
 			}
-			
+
 			try {
 				serv.addArticles(arts);
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage(),MkmConstants.MKM_ERROR,JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, e.getMessage(), MkmConstants.MKM_ERROR, JOptionPane.ERROR_MESSAGE);
 			}
-			
-			
+
 		});
-		
-		
-		
+
 		btnBasket = new JButton("add to Basket");
-		btnBasket.addActionListener(ae->{
-				CartServices serv = new CartServices();
-				try {
-					serv.addArticle(selectedArticle);
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, e.getMessage(),MkmConstants.MKM_ERROR,JOptionPane.ERROR_MESSAGE);
-				} 
+		btnBasket.addActionListener(ae -> {
+			CartServices serv = new CartServices();
+			try {
+				serv.addArticle(selectedArticle);
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(), MkmConstants.MKM_ERROR, JOptionPane.ERROR_MESSAGE);
+			}
 		});
 		btnBasket.setEnabled(false);
 		panelNorth.add(btnBasket);
-		
-		
+
 		btnExportProduct = new JButton("Export Product Catalog");
-		btnExportProduct.addActionListener(ae->{
+		btnExportProduct.addActionListener(ae -> {
 			JFileChooser fileChooser = new JFileChooser();
-			fileChooser.setDialogTitle("Choose Location");   
-			 
+			fileChooser.setDialogTitle("Choose Location");
+
 			int userSelection = fileChooser.showSaveDialog(null);
-			 
-			if (userSelection == JFileChooser.APPROVE_OPTION) 
-			{
-			    File fileToSave = fileChooser.getSelectedFile();
-			    ProductServices services = new ProductServices();
-			    try {
+
+			if (userSelection == JFileChooser.APPROVE_OPTION) {
+				File fileToSave = fileChooser.getSelectedFile();
+				ProductServices services = new ProductServices();
+				try {
 					services.exportProductList(fileToSave);
-				} 
-			    catch (Exception e) 
-			    {
+				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null, e, MkmConstants.MKM_ERROR, JOptionPane.ERROR_MESSAGE);
 				}
-			    
+
 			}
 		});
-		
-		
-		
+
 		btnExportPriceGuid = new JButton("Export PriceGuide");
-		btnExportPriceGuid.addActionListener(ae->{
-				
-				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setDialogTitle("Choose Location");   
-				 
-				int userSelection = fileChooser.showSaveDialog(null);
-				 
-				if (userSelection == JFileChooser.APPROVE_OPTION) 
-				{
-				    File fileToSave = fileChooser.getSelectedFile();
-				    ProductServices services = new ProductServices();
-				    try {
-						services.exportPriceGuide(fileToSave,1);
-					} 
-				    catch (Exception e) 
-				    {
-						JOptionPane.showMessageDialog(null, e, MkmConstants.MKM_ERROR, JOptionPane.ERROR_MESSAGE);
-					}
-				    
+		btnExportPriceGuid.addActionListener(ae -> {
+
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setDialogTitle("Choose Location");
+
+			int userSelection = fileChooser.showSaveDialog(null);
+
+			if (userSelection == JFileChooser.APPROVE_OPTION) {
+				File fileToSave = fileChooser.getSelectedFile();
+				ProductServices services = new ProductServices();
+				try {
+					services.exportPriceGuide(fileToSave, 1);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, e, MkmConstants.MKM_ERROR, JOptionPane.ERROR_MESSAGE);
 				}
+
+			}
 		});
 		panelNorth.add(btnExportPriceGuid);
 		panelNorth.add(btnExportProduct);
-		
+
 		panelWest = new JScrollPane();
 		add(panelWest, BorderLayout.WEST);
 		productsModel = new DefaultListModel<>();
@@ -227,61 +208,56 @@ public class MkmSearchPanel extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent me) {
 				btnAddWantlist.setEnabled(true);
-				
+
 				loadArticle(listResults.getSelectedValue());
-				
-				try{
-					
+
+				try {
+
 					selectedProduct = listResults.getSelectedValue();
-					
-					URL url = new URL("https:"+selectedProduct.getImage());
+
+					URL url = new URL("https:" + selectedProduct.getImage());
 					BufferedImage im = ImageIO.read(url);
 					lblPics.setIcon(new ImageIcon(im));
-					
-					}
-					catch(Exception e)
-					{
-						logger.error("https:"+selectedProduct.getImage(),e);
-					}
-				
-				
+
+				} catch (Exception e) {
+					log.error("https:" + selectedProduct.getImage(), e);
+				}
+
 			}
 		});
 		panelWest.setViewportView(listResults);
-		
+
 		panelCenter = new JScrollPane();
 		add(panelCenter, BorderLayout.CENTER);
-		
+
 		articlesModel = new ArticlesTableModel();
 		tableArticles = new JTable(articlesModel);
 		tableArticles.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent me) {
 				btnBasket.setEnabled(true);
-				selectedArticle = (Article)articlesModel.getValueAt(tableArticles.getSelectedRow(), 0);
+				selectedArticle = (Article) articlesModel.getValueAt(tableArticles.getSelectedRow(), 0);
 			}
 		});
 		panelCenter.setViewportView(tableArticles);
-		
+
 	}
-	
-	
+
 	protected void search(String text) {
 		ProductServices services = new ProductServices();
 		Map<PRODUCT_ATTS, String> map = new EnumMap<>(PRODUCT_ATTS.class);
-		
+
 		try {
 			productsModel.removeAllElements();
 			List<Product> prods = services.findProduct(text, map);
-			for(Product p : prods)
+			for (Product p : prods)
 				productsModel.addElement(p);
-			
-			
+
 		} catch (Exception e) {
-			logger.error("error searching",e);
-			JOptionPane.showMessageDialog(this, e.getMessage(),MkmConstants.MKM_ERROR,JOptionPane.ERROR_MESSAGE);
-		} 
-		
+			log.error("error searching", e);
+			JOptionPane.showMessageDialog(this, e.getMessage(), MkmConstants.MKM_ERROR, JOptionPane.ERROR_MESSAGE);
+		}
+
 	}
 
 	protected void search(int id) {
@@ -290,31 +266,29 @@ public class MkmSearchPanel extends JPanel {
 			productsModel.removeAllElements();
 			Product p = services.getProductById(id);
 			productsModel.addElement(p);
-			
+
 		} catch (Exception e) {
-			logger.error(e);
-			JOptionPane.showMessageDialog(this, e.getMessage(),MkmConstants.MKM_ERROR,JOptionPane.ERROR_MESSAGE);
-		} 
-		
+			log.error(e);
+			JOptionPane.showMessageDialog(this, e.getMessage(), MkmConstants.MKM_ERROR, JOptionPane.ERROR_MESSAGE);
+		}
+
 	}
 
 	public MkmSearchPanel() {
 		initGUI();
-			
-	
-		
+
 	}
 
 	protected void loadArticle(Product selectedValue) {
 		ArticleService service = new ArticleService();
 		Map<ARTICLES_ATT, String> atts = new EnumMap<>(ARTICLES_ATT.class);
-								atts.put(ARTICLES_ATT.start, "0");
-								atts.put(ARTICLES_ATT.maxResults, "100");
+		atts.put(ARTICLES_ATT.start, "0");
+		atts.put(ARTICLES_ATT.maxResults, "100");
 		try {
 			articlesModel.init(service.find(selectedValue, atts));
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(),MkmConstants.MKM_ERROR,JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, e.getMessage(), MkmConstants.MKM_ERROR, JOptionPane.ERROR_MESSAGE);
 		}
-		
+
 	}
 }

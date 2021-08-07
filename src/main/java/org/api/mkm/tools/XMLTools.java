@@ -14,11 +14,13 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class XMLTools {
 
 	private static XMLTools inst;
@@ -38,7 +40,7 @@ public class XMLTools {
 			
 			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			LogManager.getLogger(this.getClass()).error(e);
+			log.error(e);
 		}
 	}
 	

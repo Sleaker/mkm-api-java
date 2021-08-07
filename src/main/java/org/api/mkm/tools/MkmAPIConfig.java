@@ -6,18 +6,17 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Properties;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.api.mkm.exceptions.MkmException;
 import org.api.mkm.services.AuthenticationServices;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class MkmAPIConfig {
 
 	private static MkmAPIConfig instance;
 	private int maxCall=0;
 	private int countCall;
-	
-	static final Logger logger = LogManager.getLogger(MkmAPIConfig.class.getName());
 
 	AuthenticationServices auth;
 	
@@ -70,7 +69,7 @@ public class MkmAPIConfig {
     	   countCall=Integer.parseInt(count);
        
        
-       logger.debug("call : " + countCall+ "/" + maxCall);
+		   log.debug("call : " + countCall+ "/" + maxCall);
        
  	}
 	

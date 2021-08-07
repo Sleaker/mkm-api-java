@@ -17,8 +17,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.api.mkm.modele.Article.ARTICLES_ATT;
 import org.api.mkm.modele.Product;
 import org.api.mkm.modele.Product.PRODUCT_ATTS;
@@ -28,19 +26,21 @@ import org.api.mkm.tools.MkmConstants;
 import org.mkm.gui.modeles.ArticlesTableModel;
 import org.mkm.gui.renderer.ProductListRenderer;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class MkmMetaSearchPanel extends JPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private transient Logger logger = LogManager.getLogger(this.getClass());
 	private JList<Product> listResults;
 	private DefaultListModel<Product> productsModel;
 	private ArticlesTableModel articlesModel;
 	private JPanel panelEast;
 	private JLabel lblPics;
 	
-	private JComboBox comboBox;
+	private JComboBox<String> comboBox;
 	
 	private void initGUI()
 	{
@@ -60,7 +60,7 @@ public class MkmMetaSearchPanel extends JPanel {
 		
 		panelNorth.add(new JLabel("Search meta product : "));
 		
-		comboBox = new JComboBox<String>(new DefaultComboBoxModel<String>(ProductServices.getLangs()));
+		comboBox = new JComboBox<>(new DefaultComboBoxModel<String>(ProductServices.getLangs()));
 		panelNorth.add(comboBox);
 		panelNorth.add(txtSearch);
 		txtSearch.setColumns(15);
@@ -139,7 +139,7 @@ public class MkmMetaSearchPanel extends JPanel {
 			lblPics = new JLabel("");
 			panelEast.add(lblPics);
 		}  catch (Exception e) {
-			logger.error(e);
+			log.error(e);
 		}
 		
 	}

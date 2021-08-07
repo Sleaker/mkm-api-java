@@ -13,11 +13,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.api.mkm.exceptions.MkmException;
 import org.api.mkm.tools.MkmAPIConfig;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class ConfigDialog extends JDialog {
 
 	/**
@@ -29,7 +30,6 @@ public class ConfigDialog extends JDialog {
 	private JTextField txtAppSecret;
 	private JTextField txtAccessToken;
 	private JTextField txtAccessTokenSecret;
-	private transient Logger logger = LogManager.getLogger(this.getClass());
 
 
 	public ConfigDialog() {
@@ -131,7 +131,7 @@ public class ConfigDialog extends JDialog {
 							MkmAPIConfig.getInstance().init(txtAccessTokenSecret.getText(),txtAccessToken.getText(),txtAppSecret.getText(),txtAppToken.getText());
 							dispose();
 						} catch (MkmException e) {
-							logger.error(e);
+							log.error(e);
 						}
 				});
 				okButton.setActionCommand("OK");

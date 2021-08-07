@@ -13,8 +13,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.api.mkm.modele.Order;
 import org.api.mkm.services.OrderService;
 import org.api.mkm.services.OrderService.ACTOR;
@@ -22,6 +20,9 @@ import org.api.mkm.services.OrderService.STATE;
 import org.mkm.gui.modeles.LightArticlesTableModel;
 import org.mkm.gui.modeles.OrderTableModel;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class MkmOrderPanel extends JPanel{
 	/**
 	 * 
@@ -31,7 +32,6 @@ public class MkmOrderPanel extends JPanel{
 	private JTable tableOrders;
 	private OrderTableModel model;
 	private LightArticlesTableModel modelsArticles;
-	private transient Logger logger = LogManager.getLogger(this.getClass());
 	private JTable tableItems;
 	private JSplitPane splitPane;
 
@@ -64,7 +64,7 @@ public class MkmOrderPanel extends JPanel{
 					List<Order> orders = service.listOrders(ACTOR.buyer, (STATE)comboBox.getSelectedItem(), null);
 					model.init(orders);
 				} catch (Exception e) {
-					logger.error(e);
+					log.error(e);
 				} 
 			}
 		});

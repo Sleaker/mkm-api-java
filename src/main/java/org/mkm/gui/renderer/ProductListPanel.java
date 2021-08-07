@@ -14,12 +14,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.api.mkm.modele.Product;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class ProductListPanel extends JPanel{
-	private transient Logger logger = LogManager.getLogger(this.getClass());
 
 	/**
 	 * 
@@ -48,7 +48,7 @@ public class ProductListPanel extends JPanel{
 			var img = ImageIO.read(new URL("https:"+p.getImage()));
 			lblPics.setIcon(new ImageIcon(img.getScaledInstance(85, 118, Image.SCALE_SMOOTH)));
 		} catch (Exception e) {
-			logger.error(e);
+			log.error(e);
 		}
 		
 		GridBagConstraints gbclblPics = new GridBagConstraints();
