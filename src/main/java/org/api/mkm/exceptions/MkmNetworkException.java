@@ -1,14 +1,11 @@
 package org.api.mkm.exceptions;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MkmNetworkException extends IOException{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	static Map<Integer,String> map;
 	
@@ -20,13 +17,11 @@ public class MkmNetworkException extends IOException{
 		super(message);
 	}
 
-	static String parse(int code)
-	{
+	static String parse(int code) {
 		
-		if(map==null)
-		{
-			map = new HashMap<>();
-			map.put(307,"Temporary Redirect, Particular requests can deliver thousands of entities (e.g. a large stock or requesting articles for a specified product, and many more). Generally all these request allow you to paginate the results - either returning a 206 or 204 HTTP status code. Nevertheless, all these requests can also be done without specifying a pagination. If done and the resulting entities would be more than 1,000 the request will respond with a 307, specifying the paginated request. However, you should switch of the behaviour to automatically redirect to the given request URI, because a new Authorization header needs to be compiled for the redirected resource.");
+		if (map == null) {
+			map = new ConcurrentHashMap<>();
+			map.put(307, "Temporary Redirect, Particular requests can deliver thousands of entities (e.g. a large stock or requesting articles for a specified product, and many more). Generally all these request allow you to paginate the results - either returning a 206 or 204 HTTP status code. Nevertheless, all these requests can also be done without specifying a pagination. If done and the resulting entities would be more than 1,000 the request will respond with a 307, specifying the paginated request. However, you should switch of the behaviour to automatically redirect to the given request URI, because a new Authorization header needs to be compiled for the redirected resource.");
 			map.put(400, "Bad Request,Whenever something goes wrong with your request, e.g. your POST data and/or structure is wrong, or you want to access an article in your stock by providing an invalid ArticleID, a 400 Bad Request HTTP status is returned, describing the error within the content.");
 			map.put(401, "Unauthorized HTTP status, when authentication or authorization fails during your request, e.g. your Authorization (signature) is not correct.");
 			map.put(403, "Forbidden HTTP status, when you try to access valid resources, but don't have access to it, i. e. you try to access /authenticate with a dedicated or widget app, or resources specifically written for widget apps with a dedicated app.");
